@@ -50,6 +50,8 @@ enum pm_device_flag {
 	PM_DEVICE_FLAG_PD,
 	/** Indicates if device runtime PM should be automatically enabled */
 	PM_DEVICE_FLAG_RUNTIME_AUTO,
+	/** Indicates if device runtime PM should automatically transition to active mode */
+	PM_DEVICE_FLAG_RUNTIME_AUTO_ACTIVE,
 };
 
 /** @endcond */
@@ -171,15 +173,17 @@ struct pm_device {
  *
  * @param node_id Devicetree node for the initialized device (can be invalid).
  */
-#define Z_PM_DEVICE_FLAGS(node_id)					 \
-	(COND_CODE_1(							 \
-		 DT_NODE_EXISTS(node_id),				 \
-		 ((DT_PROP_OR(node_id, wakeup_source, 0)		 \
-			 << PM_DEVICE_FLAG_WS_CAPABLE) |		 \
-		  (DT_PROP_OR(node_id, zephyr_pm_device_runtime_auto, 0) \
-			 << PM_DEVICE_FLAG_RUNTIME_AUTO) |		 \
-		  (DT_NODE_HAS_COMPAT(node_id, power_domain) <<		 \
-			 PM_DEVICE_FLAG_PD)),				 \
+#define Z_PM_DEVICE_FLAGS(node_id)						\
+	(COND_CODE_1(								\
+		 DT_NODE_EXISTS(node_id),					\
+		 ((DT_PROP_OR(node_id, wakeup_source, 0)			\
+			 << PM_DEVICE_FLAG_WS_CAPABLE) |			\
+		  (DT_PROP_OR(node_id, zephyr_pm_device_runtime_auto, 0)	\
+			 << PM_DEVICE_FLAG_RUNTIME_AUTO) |			\
+		  (DT_PROP_OR(node_id, zephyr_pm_device_runtime_auto_active, 0)	\
+			 << PM_DEVICE_FLAG_RUNTIME_AUTO_ACTIVE) |		\
+		  (DT_NODE_HAS_COMPAT(node_id, power_domain) <<			\
+			 PM_DEVICE_FLAG_PD)),					\
 		 (0)))
 
 /**

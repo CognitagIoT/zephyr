@@ -30,3 +30,10 @@ properties:
     description: |
       Automatically configure the device for runtime power management after the
       init function runs.
+
+  zephyr,pm-device-runtime-auto-active:
+    required: false
+    type: boolean
+    description: |
+      Automatically request the device to be in active mode through
+      `pm_device_runtime_get` after enabling runtime power management.

@@ -70,12 +70,27 @@ extern "C" {
  * @brief Complete I2C DT information
  *
  * @param bus is the I2C bus
- * @param addr is the target address
+ * @param addr is the default slave address
+ * @param addresses is the array of possible addresses
  */
 struct i2c_dt_spec {
 	const struct device *bus;
-	uint16_t addr;
+	union {
+		uint16_t addr;
+		uint16_t addresses[1 + CONFIG_I2C_FALLBACK_ADDRESSES];
+	};
 };
+
+BUILD_ASSERT(offsetof(struct i2c_dt_spec, addr) == offsetof(struct i2c_dt_spec, addresses), "");
+
+/**
+ * @cond INTERNAL_HIDDEN
+ */
+
+/**
+ * INTERNAL_HIDDEN @endcond
+ */
+
 
 /**
  * @brief Structure initializer for i2c_dt_spec from devicetree (on I3C bus)
@@ -101,9 +116,9 @@ struct i2c_dt_spec {
  * @param node_id Devicetree node identifier for the I2C device whose
  *                struct i2c_dt_spec to create an initializer for
  */
-#define I2C_DT_SPEC_GET_ON_I2C(node_id)					\
-	.bus = DEVICE_DT_GET(DT_BUS(node_id)),				\
-	.addr = DT_REG_ADDR(node_id)
+#define I2C_DT_SPEC_GET_ON_I2C(node_id)					  \
+	.bus = DEVICE_DT_GET(DT_BUS(node_id)),				  \
+	.addresses = DT_PROP(node_id, reg)				  \
 
 /**
  * @brief Structure initializer for i2c_dt_spec from devicetree

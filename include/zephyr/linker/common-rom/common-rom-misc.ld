@@ -43,6 +43,14 @@
 	ITERABLE_SECTION_ROM(llext_const_symbol, 4)
 #endif /* CONFIG_LLEXT */
 
+#if defined (CONFIG_LINKER_GNU_BUILD_ID)
+	SECTION_PROLOGUE(.gnu_build_id,,)
+	{
+		__g_note_build_id = .;
+		*(.note.gnu.build-id)
+	} GROUP_ROM_LINK_IN(RAMABLE_REGION, ROMABLE_REGION)
+#endif /* CONFIG_LINKER_GNU_BUILD_ID */
+
 	SECTION_DATA_PROLOGUE(symbol_to_keep,,)
 	{
 		__symbol_to_keep_start = .;

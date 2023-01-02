@@ -308,7 +308,7 @@ typedef int16_t device_handle_t;
 #define DEVICE_GET(dev_id) (&DEVICE_NAME_GET(dev_id))
 
 /**
- * @brief Declare a static device object
+ * @brief Declare a device object
  *
  * This macro can be used at the top-level to declare a device, such
  * that DEVICE_GET() may be used before the full declaration in
@@ -322,7 +322,7 @@ typedef int16_t device_handle_t;
  * @param dev_id Device identifier.
  */
 #define DEVICE_DECLARE(dev_id)                                                 \
-	static const struct device DEVICE_NAME_GET(dev_id)
+	extern const struct device DEVICE_NAME_GET(dev_id)
 
 /**
  * @brief Get a @ref init_entry reference from a devicetree node.
@@ -926,7 +926,6 @@ static inline bool z_impl_device_is_ready(const struct device *dev)
  */
 #define Z_DEVICE_BASE_DEFINE(node_id, dev_id, name, pm, data, config, level,   \
 			     prio, api, state, deps)                           \
-	COND_CODE_1(DT_NODE_EXISTS(node_id), (), (static))                     \
 	const STRUCT_SECTION_ITERABLE_NAMED(device,                            \
 		Z_DEVICE_SECTION_NAME(level, prio),                            \
 		DEVICE_NAME_GET(dev_id)) =                                     \

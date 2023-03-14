@@ -110,6 +110,10 @@ config BT_SPI_INIT_PRIORITY
 	int "BT SPI init priority"
 	default 75
 
+config BT_SPI_BOOT_TIMEOUT_SEC
+	int "Seconds to wait for the BT controller to boot"
+	default 2
+
 config BT_BLUENRG_ACI
 	bool "ACI message with with BlueNRG-based devices"
 	help

@@ -533,9 +533,7 @@ static int bt_spi_open(void)
 			0, K_NO_WAIT);
 
 	/* Device will let us know when it's ready */
-	k_sem_take(&sem_initialised, K_FOREVER);
-
-	return 0;
+	return k_sem_take(&sem_initialised, K_SECONDS(CONFIG_BT_SPI_BOOT_TIMEOUT_SEC));
 }
 
 static const struct bt_hci_driver drv = {

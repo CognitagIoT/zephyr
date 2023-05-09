@@ -23,6 +23,10 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(flash_nrf);
 
+#ifdef CONFIG_EIP_SECURE_BOOT
+#include <eip/secure_boot.h>
+#endif /* CONFIG_EIP_SECURE_BOOT */
+
 #if DT_NODE_HAS_STATUS(DT_INST(0, nordic_nrf51_flash_controller), okay)
 #define DT_DRV_COMPAT nordic_nrf51_flash_controller
 #elif DT_NODE_HAS_STATUS(DT_INST(0, nordic_nrf52_flash_controller), okay)
@@ -158,6 +162,12 @@ static int flash_nrf_read(const struct device *dev, off_t addr,
 	if (!len) {
 		return 0;
 	}
+
+#ifdef CONFIG_EIP_SECURE_BOOT
+	if (addr < DT_REG_ADDR(DT_CHOSEN(zephyr_code_partition))) {
+		return eip_secure_boot_mem_read(data, (void *)addr, len);
+	}
+#endif /* CONFIG_EIP_SECURE_BOOT */
 
 #if CONFIG_SOC_FLASH_NRF_UICR && IS_ENABLED(NRF91_ERRATA_7_ENABLE_WORKAROUND)
 	if (within_uicr) {

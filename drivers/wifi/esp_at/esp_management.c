@@ -57,7 +57,7 @@ MODEM_CMD_DEFINE(on_cmd_gmr_at){
 	dev->at_version[0] = argv[0][0] - '0';
 	dev->at_version[1] = argv[0][2] - '0';
 	dev->at_version[2] = argv[0][4] - '0';
-	dev->at_version[2] = argv[0][6] - '0';
+	dev->at_version[3] = argv[0][6] - '0';
 	LOG_INF(" AT version: %s", argv[0]);
 	return 0;
 }

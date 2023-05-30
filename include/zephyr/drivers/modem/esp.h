@@ -23,6 +23,16 @@ extern "C" {
 #endif
 
 /**
+ * @brief Check that ESP comms link is still active
+ *
+ * @param dev Modem to check.
+ *
+ * @retval 0 On success.
+ * @retval -errno Negative error code on failure.
+ */
+int esp_link_check(const struct device *dev);
+
+/**
  * @brief Query the currently connected WiFi network parameters
  *
  * @param dev Modem to query.

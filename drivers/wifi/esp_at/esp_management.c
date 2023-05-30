@@ -12,6 +12,14 @@
 
 LOG_MODULE_REGISTER(wifi_esp_mgmt, CONFIG_WIFI_LOG_LEVEL);
 
+int esp_link_check(const struct device *dev)
+{
+	struct esp_data *data = dev->data;
+	char cmd[] = "AT";
+
+	return esp_cmd_send(data, NULL, 0, cmd, K_MSEC(100));
+}
+
 MODEM_CMD_DEFINE(on_cmd_cwjap){
 	struct esp_data *dev = CONTAINER_OF(data, struct esp_data,
 					    cmd_handler_data);

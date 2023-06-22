@@ -19,6 +19,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys_clock.h>
 #include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 
 #include "spi_nor.h"
 #include "jesd216.h"
@@ -488,6 +489,13 @@ static int exit_dpd(const struct device *const dev)
  */
 static void acquire_device(const struct device *dev)
 {
+	const struct spi_nor_config *const cfg = dev->config;
+
+	/* Request bus to be on */
+	if (pm_device_runtime_is_enabled(cfg->spi.bus)) {
+		pm_device_runtime_get(cfg->spi.bus);
+	}
+
 	if (IS_ENABLED(CONFIG_MULTITHREADING)) {
 		struct spi_nor_data *const driver_data = dev->data;
 
@@ -506,6 +514,8 @@ static void acquire_device(const struct device *dev)
  */
 static void release_device(const struct device *dev)
 {
+	const struct spi_nor_config *const cfg = dev->config;
+
 	if (IS_ENABLED(CONFIG_SPI_NOR_IDLE_IN_DPD)) {
 		enter_dpd(dev);
 	}
@@ -514,6 +524,11 @@ static void release_device(const struct device *dev)
 		struct spi_nor_data *const driver_data = dev->data;
 
 		k_sem_give(&driver_data->sem);
+	}
+
+	/* Release bus request */
+	if (pm_device_runtime_is_enabled(cfg->spi.bus)) {
+		pm_device_runtime_put(cfg->spi.bus);
 	}
 }
 

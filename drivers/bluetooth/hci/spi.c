@@ -446,7 +446,7 @@ static int bt_spi_send(struct net_buf *buf)
 		net_buf_push_u8(buf, HCI_CMD);
 		break;
 	default:
-		LOG_ERR("Unsupported type");
+		LOG_ERR("Unsupported type (%d)", bt_buf_get_type(buf));
 		k_sem_give(&sem_busy);
 		return -EINVAL;
 	}

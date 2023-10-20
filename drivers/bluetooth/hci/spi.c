@@ -310,6 +310,21 @@ static struct net_buf *bt_spi_rx_buf_construct(uint8_t *msg)
 				discardable = true;
 				timeout = K_NO_WAIT;
 			}
+
+			if (msg[EVT_HEADER_EVENT] == BT_HCI_EVT_CMD_COMPLETE) {
+				uint8_t *evt_start = &msg[1] + sizeof(struct bt_hci_evt_hdr);
+				struct bt_hci_evt_cmd_complete *cc_rsp = (struct bt_hci_evt_cmd_complete *)evt_start;
+
+				/* BT_HCI_OP_HOST_NUM_COMPLETED_PACKETS is not expected under normal operation, but can
+				 * cause command buffer corruption if it does appear. The event is dropped deeper in the
+				 * stack after corrupting, so drop it here until #64158 is resolved.
+				 */
+				if (cc_rsp->opcode == BT_HCI_OP_HOST_NUM_COMPLETED_PACKETS) {
+					LOG_WRN("Unexpected HOST_NUM_COMPLETED_PACKETS");
+					return NULL;
+				}
+			}
+
 			buf = bt_buf_get_evt(msg[EVT_HEADER_EVENT],
 					     discardable, timeout);
 			if (!buf) {

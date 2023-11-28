@@ -299,9 +299,7 @@ void SX126xSetOperatingMode(RadioOperatingModes_t mode)
 	case MODE_SLEEP:
 		/* Additionally disable the DIO1 interrupt to save power */
 		sx126x_dio1_irq_disable(&dev_data);
-		if (pm_device_runtime_is_enabled(dev_config.bus.bus)) {
-			pm_device_runtime_put(dev_config.bus.bus);
-		}
+		pm_device_runtime_put(dev_config.bus.bus);
 		__fallthrough;
 	default:
 		sx126x_set_rx_enable(0);
@@ -391,9 +389,7 @@ void SX126xWakeup(void)
 		.count = 1,
 	};
 
-	if (pm_device_runtime_is_enabled(dev_config.bus.bus)) {
-		pm_device_runtime_get(dev_config.bus.bus);
-	}
+	pm_device_runtime_get(dev_config.bus.bus);
 
 	LOG_DBG("Sending GET_STATUS");
 	ret = spi_write_dt(&dev_config.bus, &tx);

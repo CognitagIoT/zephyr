@@ -492,9 +492,7 @@ static void acquire_device(const struct device *dev)
 	const struct spi_nor_config *const cfg = dev->config;
 
 	/* Request bus to be on */
-	if (pm_device_runtime_is_enabled(cfg->spi.bus)) {
-		pm_device_runtime_get(cfg->spi.bus);
-	}
+	pm_device_runtime_get(cfg->spi.bus);
 
 	if (IS_ENABLED(CONFIG_MULTITHREADING)) {
 		struct spi_nor_data *const driver_data = dev->data;
@@ -527,9 +525,7 @@ static void release_device(const struct device *dev)
 	}
 
 	/* Release bus request */
-	if (pm_device_runtime_is_enabled(cfg->spi.bus)) {
-		pm_device_runtime_put(cfg->spi.bus);
-	}
+	pm_device_runtime_put(cfg->spi.bus);
 }
 
 /**

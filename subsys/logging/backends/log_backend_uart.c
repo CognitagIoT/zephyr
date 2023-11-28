@@ -66,13 +66,11 @@ static int char_out(uint8_t *data, size_t length, void *ctx)
 	ARG_UNUSED(ctx);
 	int err;
 
-	if (pm_device_runtime_is_enabled(uart_dev) && !k_is_in_isr()) {
-		if (pm_device_runtime_get(uart_dev) < 0) {
-			/* Enabling the UART instance has failed but this
-			 * function MUST return the number of bytes consumed.
-			 */
-			return length;
-		}
+	if (pm_device_runtime_get(uart_dev) < 0) {
+		/* Enabling the UART instance has failed but this
+		 * function MUST return the number of bytes consumed.
+		 */
+		return length;
 	}
 
 	if (IS_ENABLED(CONFIG_LOG_BACKEND_UART_OUTPUT_DICTIONARY_HEX)) {
@@ -95,10 +93,8 @@ static int char_out(uint8_t *data, size_t length, void *ctx)
 
 	(void)err;
 cleanup:
-	if (pm_device_runtime_is_enabled(uart_dev) && !k_is_in_isr()) {
-		/* As errors cannot be returned, ignore the return value */
-		(void)pm_device_runtime_put(uart_dev);
-	}
+	/* As errors cannot be returned, ignore the return value */
+	(void)pm_device_runtime_put(uart_dev);
 
 	return length;
 }
@@ -156,14 +152,7 @@ static void panic(struct log_backend const *const backend)
 {
 	/* Ensure that the UART device is in active mode */
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
-	if (pm_device_runtime_is_enabled(uart_dev)) {
-		if (k_is_in_isr()) {
-			/* pm_device_runtime_get cannot be used from ISRs */
-			pm_device_action_run(uart_dev, PM_DEVICE_ACTION_RESUME);
-		} else {
-			pm_device_runtime_get(uart_dev);
-		}
-	}
+	pm_device_runtime_get(uart_dev);
 #elif defined(CONFIG_PM_DEVICE)
 	enum pm_device_state pm_state;
 	int rc;

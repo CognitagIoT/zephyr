@@ -10,6 +10,8 @@
 
 #include <zephyr/random/random.h>
 
+#ifndef CONFIG_RANDOM_RAND32_DEPRECATED_WARN
 #warning "<zephyr/random/rand32.h> is deprecated, include <zephyr/random/random.h> instead"
+#endif /* CONFIG_RANDOM_RAND32_DEPRECATED_WARN */
 
 #endif /* ZEPHYR_INCLUDE_RANDOM_RAND32_H_ */

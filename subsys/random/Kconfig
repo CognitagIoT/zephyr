@@ -126,4 +126,11 @@ config CS_CTR_DRBG_PERSONALIZATION
 	  source to make the initialization of the CTR-DRBG as unique as
 	  possible.
 
+config RANDOM_RAND32_DEPRECATED_WARN
+	bool "Suppress rand32.h deprecation warning"
+	help
+	  Some downstream modules are still including the old header,
+	  which causes CI to fail. Suppressing the warning in known cases
+	  is a temporary workaround.
+
 endmenu

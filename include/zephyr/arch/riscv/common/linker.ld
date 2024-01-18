@@ -160,6 +160,11 @@ SECTIONS
 
     SECTION_PROLOGUE(_RODATA_SECTION_NAME,,)
 	{
+/* Located in generated directory. This file is populated by the
+ * zephyr_linker_sources() Cmake function.
+ */
+#include <snippets-pre-rodata.ld>
+
 		 . = ALIGN(4);
 		 *(.srodata)
 		 *(".srodata.*")

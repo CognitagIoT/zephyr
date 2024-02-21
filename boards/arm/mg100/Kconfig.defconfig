@@ -7,21 +7,21 @@ config BOARD
 	default "mg100"
 
 config MODEM
-	default NETWORKING
+	default y if NETWORKING
 
 config MODEM_HL7800
-	default NETWORKING
+	default y if NETWORKING
 
 config NORDIC_QSPI_NOR
-	default BOOTLOADER_MCUBOOT
+	default y if BOOTLOADER_MCUBOOT
 
 config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	default 4096 if NORDIC_QSPI_NOR
 
 config REGULATOR
-	default DISK_DRIVER_SDMMC
+	default y if DISK_DRIVER_SDMMC
 
 config BT_CTLR
-	default BT
+	default y if BT
 
 endif # BOARD_MG100

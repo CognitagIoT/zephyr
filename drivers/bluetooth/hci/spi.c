@@ -380,6 +380,8 @@ static void bt_spi_rx_thread(void)
 		LOG_DBG("");
 
 		do {
+			bool data_ready;
+
 			/* Wait for SPI bus to be available */
 			k_sem_take(&sem_busy, K_FOREVER);
 			init_irq_high_loop();
@@ -387,9 +389,9 @@ static void bt_spi_rx_thread(void)
 				kick_cs();
 				ret = bt_spi_transceive(header_master, 5,
 							header_slave, 5);
-			} while ((((header_slave[STATUS_HEADER_TOREAD] == 0U ||
-				    header_slave[STATUS_HEADER_TOREAD] == 0xFF) &&
-				   !ret)) && exit_irq_high_loop());
+				data_ready = (header_slave[STATUS_HEADER_READY] == READY_NOW) &&
+					     (header_slave[STATUS_HEADER_TOREAD] > 0);
+			} while (((!data_ready && (ret == 0))) && exit_irq_high_loop());
 
 			/* Delay here is rounded up to next tick */
 			k_sleep(K_USEC(DATA_DELAY_US));
